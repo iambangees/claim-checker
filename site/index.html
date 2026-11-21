@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claim Checker — before you claim, check what it really costs</title>
+<meta name="description" content="Paste a crypto claim, airdrop or whitelist pitch and check it against the traps: hidden costs, posting requirements, locks, and red flags.">
+<meta property="og:title" content="Claim Checker — before you claim, check what it really costs">
+<meta property="og:description" content="A 'free' claim can cost your account, your wallet's security settings, or real money. Run it through the checker first.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="banner.png">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  :root { --bg:#12100e; --card:#1d1a16; --line:#35302a; --text:#f3efe8; --muted:#aaa294; --amber:#ffb454; --red:#ff6b5e; --yellow:#ffd23e; --green:#5ec86e; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background:var(--bg); color:var(--text); }
+  .wrap { max-width: 700px; margin: 0 auto; padding: 28px 16px 56px; }
+  h1 { font-size: 34px; margin: 6px 0 2px; letter-spacing: .2px; }
+  .tag { color: var(--muted); margin: 0 0 22px; line-height: 1.55; }
+  .hero-img { width: 100%; border-radius: 16px; border: 1px solid var(--line); margin: 4px 0 20px; display: block; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px; margin-top: 20px; }
+  .card h2 { font-size: 19px; margin: 0 0 6px; }
+  .card h3 { margin: 20px 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  .card p.hint { color: var(--muted); font-size: 14px; line-height: 1.55; margin: 0 0 12px; }
+  textarea { width:100%; min-height: 110px; background:#0d0b09; color:var(--text); border:1px solid var(--line); border-radius:12px; padding: 13px 14px; font-size: 15px; font-family: inherit; resize: vertical; }
+  textarea:focus { outline: 2px solid var(--amber); border-color: transparent; }
+  button { background: var(--amber); color:#1d1405; border:0; border-radius: 10px; padding: 12px 18px; font-size: 15px; font-weight: 700; cursor: pointer; }
+  button.ghost { background: transparent; color: var(--text); border: 1px solid var(--line); font-weight: 600; }
+  .row { display:flex; gap:10px; margin-top: 12px; flex-wrap: wrap; }
+  .found { margin-top: 12px; display:none; }
+  .found div { border-left: 3px solid var(--amber); background:#171410; padding: 9px 12px; border-radius: 0 10px 10px 0; margin-bottom: 8px; font-size: 14.5px; line-height: 1.5; }
+  .found b { color: var(--amber); }
+  .flag { display:flex; gap:12px; align-items:flex-start; padding: 11px 12px; border:1px solid var(--line); border-radius: 12px; margin-bottom: 9px; cursor: pointer; background:#171410; }
+  .flag input { width: 20px; height: 20px; margin-top: 1px; accent-color: var(--amber); flex: none; }
+  .flag .ft { font-size: 15.5px; font-weight: 600; line-height: 1.4; }
+  .flag .fm { color: var(--muted); font-size: 13.5px; line-height: 1.5; margin-top: 2px; }
+  .flag.on { border-color: var(--amber); background:#221c12; }
+  .flag.stop.on { border-color: var(--red); background:#261512; }
+  .verdict { display:none; margin-top: 20px; border-radius: 16px; padding: 22px; border: 1px solid var(--line); }
+  .verdict .big { font-size: 27px; font-weight: 800; margin: 0 0 6px; }
+  .verdict .why { line-height: 1.6; font-size: 15.5px; margin: 0 0 10px; }
+  .verdict ul { margin: 8px 0 4px; padding-left: 20px; line-height: 1.65; font-size: 15px; }
+  .verdict.green { background:#12240f; border-color:#2c5226; } .verdict.green .big { color: var(--green); }
+  .verdict.yellow { background:#262006; border-color:#5c4d14; } .verdict.yellow .big { color: var(--yellow); }
+  .verdict.red { background:#2a100d; border-color:#6e2a22; } .verdict.red .big { color: var(--red); }
+  .rules { line-height: 1.65; font-size: 15px; }
+  .rules li { margin-bottom: 9px; }
+  .foot { color: var(--muted); font-size: 13px; line-height: 1.6; margin-top: 30px; }
+  a { color: var(--amber); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Claim Checker</h1>
+  <p class="tag">Before you claim, check what it really costs. A "free" airdrop, whitelist or lending offer can quietly ask for your social account, your wallet's security settings, a signature — or real money. Run the pitch through here first.</p>
+  <img class="hero-img" src="banner.png" alt="Claim Checker — a magnifier over a claim, with warning flags">
+
+  <div class="card">
+    <h2>1 · Paste the pitch</h2>
+    <p class="hint">Paste the post, message or offer text you were sent. The checker scans it for trap phrases and ticks the matching boxes below — you stay in control and can untick anything.</p>
+    <textarea id="pitch" placeholder="Paste the claim / airdrop / whitelist / lending offer text here…"></textarea>
+    <div class="row">
+      <button id="btnScan">Scan the text</button>
+      <button class="ghost" id="btnClear">Clear everything</button>
+    </div>
+    <div class="found" id="found"></div>
+  </div>
+
+  <div class="card">
+    <h2>2 · The red-flag checklist</h2>
+    <p class="hint">Tick everything the offer asks of you or admits about itself. Be honest — ticking a box here costs nothing; missing one out there can.</p>
+    <div id="flags"></div>
+    <div class="row">
+      <button id="btnVerdict">Get the verdict</button>
+    </div>
+  </div>
+
+  <div class="verdict" id="verdict">
+    <p class="big" id="vTitle"></p>
+    <p class="why" id="vWhy"></p>
+    <div id="vList"></div>
+    <div class="row">
+      <button class="ghost" id="btnCopy">Copy this report</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>The golden rules</h2>
+    <ol class="rules">
+      <li><b>A claim that costs money is not free.</b> Gas, mint fees, "activation" payments and minimum buys are a price — decide if the reward is worth it <i>before</i> paying.</li>
+      <li><b>Check the official site first.</b> If the product (a lending app, a bonus, a second mint round) is not mentioned on the project's own website or verified channels, treat it as unverified — lookalike bots and apps are a standard phishing pattern.</li>
+      <li><b>What you can't transfer, you can't sell.</b> A non-transferable NFT or a locked token has no exit. "Claim now, sell later" only works if selling is actually possible.</li>
+      <li><b>Your post is a payment.</b> If claiming requires posting promotion on your own X or social account, you are paying with your reputation and your audience. Price it in.</li>
+      <li><b>Security settings are a cost too.</b> Developer Mode, broad approvals and wallet connections widen what an operator can do. Know exactly what access you are granting, and to whom.</li>
+      <li><b>Never type a seed phrase or private key anywhere.</b> No legitimate claim needs it. Ever. The same goes for pairing codes — a real project never asks for yours.</li>
+    </ol>
+  </div>
+
+  <p class="foot">Claim Checker runs entirely in your browser — nothing you paste is uploaded anywhere. It is a checklist, not a guarantee: a clean result means no <i>known</i> traps were found, not that an offer is safe. Always verify on the project's official channels. Built by Bangees, from real claims checked the hard way.</p>
+</div>
+
+<script>
+const FLAGS = [
+  // hard stops
+  { id:"seed", group:"stop", title:"Asks for a seed phrase, private key or wallet pairing code", means:"This is theft, full stop. No real claim ever needs these.", cost:"your whole wallet" },
+  { id:"payunlock", group:"stop", title:"Asks you to send or deposit money to unlock, activate or release a reward", means:"The classic advance-fee trap: the 'reward' never arrives, or each unlock asks for another payment.", cost:"real money, gone" },
+  { id:"guarantee", group:"stop", title:"Promises guaranteed returns, fixed profit or passive income figures", means:"No honest crypto product can guarantee returns. A promise like this is either a lie or a trap — and in regulated competitions it is a disqualifying claim.", cost:"your money, on a promise" },
+  { id:"unofficial", group:"stop", title:"The product is not mentioned on the project's official site or verified channels", means:"An unverified operator. The mini app, bot or page you were sent may have nothing to do with the real project.", cost:"trust in a stranger" },
+  // costs & gates
+  { id:"socialpost", group:"cost", title:"Requires posting promotion on your own X / social account", means:"You pay with your account's reputation. Some people are fine with that — but it should be a choice, not a surprise.", cost:"your social account" },
+  { id:"connect", group:"cost", title:"Requires connecting your wallet to their site or app", means:"A connection alone can't move funds, but it is the first step of every signing flow — and lookalike sites harvest connections.", cost:"a wallet connection" },
+  { id:"devmode", group:"cost", title:"Requires Developer Mode or loosening wallet security settings", means:"Developer Mode lets external operators act through your wallet. Only enable it for operators you fully trust, and know when it expires.", cost:"your wallet's safety settings" },
+  { id:"sign", group:"cost", title:"Requires signing a transaction or minting", means:"A signature is an action with consequences. Read what the preview says it does — contract address, value, approvals — before confirming.", cost:"a signed transaction" },
+  { id:"gas", group:"cost", title:"Costs gas, a mint fee, or has a minimum buy", means:"Then it is not free. Add up the real total: fee + gas + the minimum buy, and compare it honestly with what you might get.", cost:"real money" },
+  { id:"lock", group:"cost", title:"The reward is locked or vests over time", means:"Locked rewards can fall in value — or never unlock. Half-now, half-in-7-days is common; price the wait in.", cost:"time, and value risk" },
+  // token reality
+  { id:"nontransfer", group:"token", title:"The reward cannot be transferred or sold", means:"Non-transferable means no exit and no market price. It may still be useful inside the project — but it is not money.", cost:"any chance to sell" },
+  { id:"tax", group:"token", title:"Buy/sell taxes or fees above ~5%", means:"Heavy taxes eat the exit. A 1% burn + 1% tax on every sell quietly compounds against you.", cost:"a cut of every sale" },
+  { id:"noliquidity", group:"token", title:"No trading pair or liquidity exists for the token yet", means:"A token with no market has no price — only a promise of one. It may list later, or never.", cost:"any real price today" },
+  // trust
+  { id:"anon", group:"trust", title:"Anonymous team with no track record", means:"Anonymity is common in crypto, but it removes your only recourse if things go wrong. Weigh it.", cost:"accountability" },
+  { id:"noaudit", group:"trust", title:"No audit, and the contract is not verified/open", means:"Unverified contracts can hide anything. If you can't read it, you're trusting blindly.", cost:"visibility" },
+  { id:"pressure", group:"trust", title:"Pressure tactics: countdowns, 'only X spots left', DM-only links", means:"Urgency is manufactured to stop you checking. Real opportunities survive a day of verification.", cost:"your time to think" },
+];
+
+const SCAN = [
+  { re:/(seed phrase|private key|recovery phrase|pairing code)/i, flag:"seed", label:"Asks for a seed phrase / private key / pairing code" },
+  { re:/(send|deposit|pay)[^.]{0,40}(unlock|activate|release|withdraw)/i, flag:"payunlock", label:"Pay or deposit to unlock something" },
+  { re:/(guaranteed|passive income|fixed profit|guaranteed returns|double your|risk[- ]free)/i, flag:"guarantee", label:"Promises guaranteed returns" },
+  { re:/(post|share|tweet)[^.]{0,50}(x|twitter|your account|social)/i, flag:"socialpost", label:"Requires posting on your social account" },
+  { re:/(developer mode)/i, flag:"devmode", label:"Mentions Developer Mode" },
+  { re:/(connect your wallet|wallet connect|connect wallet)/i, flag:"connect", label:"Requires connecting a wallet" },
+  { re:/(non[- ]transferable|cannot be (sold|transferred)|not transferable)/i, flag:"nontransfer", label:"Reward is non-transferable" },
+  { re:/(presale|pre-sale|minimum buy|min\.? buy|mint price)/i, flag:"gas", label:"Costs money: presale / mint fee / minimum buy" },
+  { re:/(locked|vesting|unlocks? (in|after)|lock[- ]?up)/i, flag:"lock", label:"Reward is locked or vests" },
+  { re:/(only \d+ (spots|places|slots) left|spots left|hurry|ending soon|last chance|limited spots)/i, flag:"pressure", label:"Pressure tactics: scarcity and hurry" },
+  { re:/(buy tax|sell tax|% tax|tax on (buys|sells))/i, flag:"tax", label:"Mentions buy/sell taxes" },
+];
+
+const $ = (id) => document.getElementById(id);
+const flagsEl = $("flags");
+const state = {};
+
+function renderFlags() {
+  const groups = [ ["stop","🚫 Hard stops — any one of these ends the conversation"],
+                   ["cost","💸 Costs & gates — what the 'free' claim actually asks for"],
+                   ["token","🪙 Token reality — can you ever sell it?"],
+                   ["trust","🔍 Trust — who is behind it?"] ];
+  flagsEl.innerHTML = "";
+  for (const [g, label] of groups) {
+    const h = document.createElement("h3"); h.textContent = label; flagsEl.appendChild(h);
+    for (const f of FLAGS.filter(x => x.group === g)) {
+      const lab = document.createElement("label");
+      lab.className = "flag" + (g === "stop" ? " stop" : "") + (state[f.id] ? " on" : "");
+      lab.innerHTML = `<input type="checkbox" ${state[f.id] ? "checked" : ""} data-id="${f.id}"><span><span class="ft">${f.title}</span><div class="fm">${f.means}</div></span>`;
+      lab.querySelector("input").addEventListener("change", (e) => { state[f.id] = e.target.checked; lab.classList.toggle("on", state[f.id]); });
+      flagsEl.appendChild(lab);
+    }
+  }
+}
+renderFlags();
+
+$("btnScan").onclick = () => {
+  const text = $("pitch").value || "";
+  const found = $("found");
+  found.innerHTML = "";
+  let hits = 0;
+  for (const rule of SCAN) {
+    const m = text.match(rule.re);
+    if (m) {
+      hits++;
+      state[rule.flag] = true;
+      const d = document.createElement("div");
+      d.innerHTML = `Found: <b>${rule.label}</b> — matched “${m[0].replace(/</g,"&lt;")}”. Ticked below.`;
+      found.appendChild(d);
+    }
+  }
+  if (!hits) {
+    const d = document.createElement("div");
+    d.innerHTML = "No trap phrases found in that text. Still work through the checklist below — the worst gates are often on the claim page, not in the pitch.";
+    found.appendChild(d);
+  }
+  found.style.display = "block";
+  renderFlags();
+};
+
+$("btnClear").onclick = () => {
+  $("pitch").value = "";
+  $("found").style.display = "none";
+  for (const k of Object.keys(state)) state[k] = false;
+  $("verdict").style.display = "none";
+  renderFlags();
+};
+
+let lastReport = "";
+$("btnVerdict").onclick = () => {
+  const ticked = FLAGS.filter(f => state[f.id]);
+  const stops = ticked.filter(f => f.group === "stop");
+  const others = ticked.filter(f => f.group !== "stop");
+  const v = $("verdict");
+  let cls, title, why;
+  if (stops.length) {
+    cls = "red"; title = "🔴 Walk away";
+    why = "This offer trips at least one hard stop. No reward is worth a seed phrase, an unlock payment, a guaranteed-returns promise, or an unverified operator.";
+  } else if (others.length === 0) {
+    cls = "green"; title = "🟢 No known traps found";
+    why = "Nothing on the checklist matched. That is a good sign, not a guarantee — still verify the project on its official channels before connecting anything.";
+  } else if (others.length <= 3) {
+    cls = "yellow"; title = "🟡 Proceed with caution";
+    why = "No hard stops, but this 'free' claim does ask for things. Read each one below and decide if the reward is honestly worth the total cost.";
+  } else {
+    cls = "red"; title = "🔴 High risk — likely not worth it";
+    why = "No single hard stop, but the costs stack up: " + others.length + " separate gates, costs or trust gaps. Stacked small costs are how 'free' claims get expensive.";
+  }
+  v.className = "verdict " + cls;
+  $("vTitle").textContent = title;
+  $("vWhy").textContent = why;
+  const costs = ticked.map(f => f.cost);
+  let html = "";
+  if (ticked.length) {
+    html += `<p class="why"><b>What this claim actually asks for:</b> ${costs.join("; ")}.</p>`;
+    html += "<ul>" + ticked.map(f => `<li><b>${f.title}.</b> ${f.means}</li>`).join("") + "</ul>";
+  }
+  $("vList").innerHTML = html;
+  v.style.display = "block";
+  v.scrollIntoView({ behavior: "smooth", block: "start" });
+  lastReport = "Claim Checker verdict: " + title + "\n" + why +
+    (ticked.length ? "\nFlags:\n" + ticked.map(f => "- " + f.title).join("\n") : "\nNo flags ticked.");
+};
+
+$("btnCopy").onclick = async () => {
+  if (!lastReport) return;
+  try { await navigator.clipboard.writeText(lastReport); $("btnCopy").textContent = "Copied ✓"; setTimeout(() => $("btnCopy").textContent = "Copy this report", 1600); }
+  catch (e) { $("btnCopy").textContent = "Copy failed — long-press to copy manually"; }
+};
+</script>
+</body>
+</html>
